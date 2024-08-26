@@ -1,8 +1,11 @@
 const express = require('express');
 const axios = require('axios');
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 5000;
+
+app.use(cors());
 
 app.get('/auth', (req, res) => {
   const redirectUri = `${process.env.BASE_URL}/callback`;
@@ -27,7 +30,10 @@ app.get('/callback', async (req, res) => {
 
     const accessToken = response.data.access_token;
     res.send(
-      `<script>window.opener.postMessage({ token: "${accessToken}" }, '*');window.close();</script>`
+      `<script>
+        window.opener.postMessage({ token: "${accessToken}" }, '*');
+        window.close();
+      </script>`
     );
   } catch (error) {
     res.status(500).send('Error during GitHub OAuth');

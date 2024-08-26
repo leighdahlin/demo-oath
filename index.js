@@ -39,10 +39,9 @@ app.get('/callback', async (req, res) => {
     res.send(
       `<script>
         window.opener.postMessage(
-          'authorization:github:success:${JSON.stringify({ token: "${accessToken}" })}',
-          '*'
-        );
-        window.opener.postMessage("authorizing:github", "*");
+				'authorization:github:success:${JSON.stringify({ token })}',
+				'*'
+			);        window.opener.postMessage("authorizing:github", "*");
         window.close();      
       </script>`
     );

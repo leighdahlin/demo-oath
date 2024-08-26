@@ -32,8 +32,8 @@ app.get('/callback', async (req, res) => {
     res.send(
       `<script>
         window.opener.postMessage({ token: "${accessToken}" }, '*');
-        window.close();
-      </script>`
+        // Temporarily comment out window.close() for debugging
+        // window.close();      </script>`
     );
   } catch (error) {
     res.status(500).send('Error during GitHub OAuth');

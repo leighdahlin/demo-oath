@@ -15,6 +15,9 @@ app.get('/auth', (req, res) => {
 
 app.get('/callback', async (req, res) => {
   const { code } = req.query;
+  if (!code) {
+    return res.status(400).send('Missing authorization code');
+  }
   try {
     const response = await axios.post(
       'https://github.com/login/oauth/access_token',
@@ -29,11 +32,19 @@ app.get('/callback', async (req, res) => {
     );
 
     const accessToken = response.data.access_token;
+    if (!accessToken) {
+      return res.status(500).send('Failed to retrieve access token');
+    }
+
     res.send(
       `<script>
-        window.opener.postMessage({ token: "${accessToken}" }, '*');
-        // Temporarily comment out window.close() for debugging
-        // window.close();      </script>`
+        window.opener.postMessage(
+          'authorization:github:success:${JSON.stringify({ token: "${accessToken}" })}',
+          '*'
+        );
+        window.opener.postMessage("authorizing:github", "*");
+        window.close();      
+      </script>`
     );
   } catch (error) {
     res.status(500).send('Error during GitHub OAuth');
